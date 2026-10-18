@@ -1,1071 +1,809 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Happy Birthday, My Favorite Person — Buku Kenangan</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#fff0f3">
+  <title>For My Favorite Person ❤️</title>
+
   <style>
-    /* Basic reset */
-    :root{
-      --bg:#FBF7F3;
-      --paper:#fffefc;
-      --accent:#D98F9B;
-      --accent-dark:#C76E80;
-      --muted:#6b6b6b;
-      --shadow: 0 10px 30px rgba(0,0,0,0.12);
-      --page-width:760px;
-      --page-height:520px;
-      --safe-pad:20px;
-      --polaroid-bg: #ffffff;
-      --polaroid-shadow: 0 6px 18px rgba(0,0,0,0.18);
-      --glass: rgba(255,255,255,0.6);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: linear-gradient(180deg,#f3e9e5 0%, #faf6f4 100%);
-      color:#222;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-      padding:24px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Great+Vibes&display=swap');
+
+    :root {
+      --pink: #f5b9c8;
+      --pink-dark: #d987a1;
+      --cream: #fff8f0;
+      --gold: #b88763;
+      --text: #654653;
+      --white: #fffdfb;
     }
 
-    /* App shell */
-    .app{
-      width:100%;
-      max-width:980px;
-      display:flex;
-      gap:20px;
-      align-items:flex-start;
-      justify-content:center;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    /* Left panel: Controls */
-    .controls{
-      width:280px;
-      background:rgba(255,255,255,0.9);
-      border-radius:12px;
-      padding:16px;
-      box-shadow: var(--shadow);
-      position:relative;
-      flex-shrink:0;
-    }
-    .controls h2{margin:6px 0 12px;font-size:18px;color:var(--accent-dark)}
-    .controls .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      padding:10px 12px;
-      border-radius:8px;
-      background:var(--accent);
-      color:white;
-      border:0;
-      cursor:pointer;
-      margin:6px 0;
-    }
-    .controls .btn.secondary{
-      background:transparent;
-      color:var(--accent-dark);
-      border:2px solid var(--accent);
-    }
-    .controls .small{font-size:13px;padding:8px 10px}
-    .controls label{display:block;font-size:13px;margin-top:8px;color:var(--muted)}
-    .controls input[type="text"], .controls input[type="url"], .controls input[type="file"], .controls textarea, .controls select{
-      width:100%;
-      padding:8px;
-      border-radius:6px;
-      border:1px solid #e5dfe0;
-      margin-top:6px;
-      font-size:14px;
-      background:white;
-    }
-    .controls .row{display:flex;gap:8px}
-    .status{
-      margin-top:8px;
-      font-size:13px;color:green;
-    }
-    .warn{color:#b33}
-
-    /* Book area */
-    .book-stage{
-      perspective:1600px;
-      width:var(--page-width);
-      height:var(--page-height);
-      position:relative;
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background: var(--cream);
+      min-height: 100vh;
+      overflow: hidden;
     }
 
-    .book{
-      width:100%;
-      height:100%;
-      position:relative;
-      transform-style:preserve-3d;
+    button {
+      font: inherit;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .page{
-      width:100%;
-      height:100%;
-      position:absolute;
-      top:0;
-      left:0;
-      transform-origin:left center;
-      backface-visibility:hidden;
-      transition: transform 700ms cubic-bezier(.2,.8,.2,1), box-shadow 300ms;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+    .background {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(ellipse at 15% 20%, #ffe0e8 0, transparent 40%),
+        radial-gradient(ellipse at 90% 85%, #f8d9c6 0, transparent 38%),
+        linear-gradient(135deg, #fff8f0, #fff0f4);
     }
 
-    .page-inner{
-      width:calc(100% - (var(--safe-pad)*2));
-      height:calc(100% - (var(--safe-pad)*2));
-      background:var(--paper);
-      box-shadow:var(--shadow);
-      border-radius:8px;
-      padding:var(--safe-pad);
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      position:relative;
-      overflow:hidden;
+    .floating-layer {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: -1;
     }
 
-    /* Flip animation class */
-    .turning .page{
-      transition: transform 700ms cubic-bezier(.2,.8,.2,1);
+    .float-item {
+      position: absolute;
+      bottom: -50px;
+      opacity: 0;
+      animation: floatUp linear infinite;
+      user-select: none;
     }
 
-    /* Content layout */
-    .page-header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
-    }
-    .page-title{
-      font-size:20px;
-      font-weight:600;
-      color:var(--accent-dark);
-      background:linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0));
-      padding:6px 10px;border-radius:8px;
-    }
-    .page-meta{font-size:13px;color:var(--muted)}
-
-    .page-body{
-      display:flex;
-      gap:12px;
-      flex:1;
-      align-items:flex-start;
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      15% { opacity: .55; }
+      85% { opacity: .4; }
+      100% {
+        transform: translateY(-115vh) rotate(330deg);
+        opacity: 0;
+      }
     }
 
-    /* Left column photo */
-    .photo-col{
-      width:48%;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      align-items:center;
-    }
-    .polaroid{
-      width:100%;
-      background:var(--polaroid-bg);
-      border-radius:8px;
-      padding:12px;
-      box-shadow:var(--polaroid-shadow);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-    }
-    .polaroid .frame{
-      width:100%;
-      height:240px;
-      background:linear-gradient(180deg,#f6f1ee, #fff);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-      border-radius:6px;
-      position:relative;
-    }
-    .polaroid img{
-      max-width:100%;
-      max-height:100%;
-      object-fit:contain;
-      display:block;
-    }
-    .placeholder{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:var(--muted);
-      font-size:15px;
-      text-align:center;
-      padding:12px;
-    }
-    .photo-caption{
-      margin-top:8px;
-      font-size:14px;
-      color:#333;
-      width:100%;
+    .app {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 22px 16px;
     }
 
-    /* Right column story & audio */
-    .story-col{
-      width:52%;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-    .story-col textarea{
-      resize:vertical;
-      min-height:160px;
-      max-height:320px;
-    }
-    .audio-box{
-      background:linear-gradient(180deg,#fff, #fcfbfa);
-      padding:8px;
-      border-radius:8px;
-      border:1px dashed #eee;
-    }
-    .audio-controls{
-      display:flex;
-      gap:8px;
-      align-items:center;
-      margin-top:6px;
+    .topbar {
+      width: min(100%, 760px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      gap: 12px;
     }
 
-    /* Footer controls inside a page */
-    .page-footer{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:8px;
+    .brand {
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 2px;
+      font-weight: 700;
+      text-transform: uppercase;
     }
-    .page-footer .left, .page-footer .right{display:flex;gap:8px;align-items:center}
 
-    /* Navigation overlay (bottom) */
-    .nav-bottom{
-      margin-top:10px;
-      display:flex;
-      gap:8px;
-      align-items:center;
-      justify-content:space-between;
+    .counter {
+      font-size: 12px;
+      color: #a77b88;
+      letter-spacing: 1px;
     }
-    .progress{
-      flex:1;
-      height:10px;
-      background:linear-gradient(90deg,#f0eceb,#f7f4f3);
-      border-radius:8px;
-      overflow:hidden;
-      margin:0 10px;
-    }
-    .progress > i{display:block;height:100%;background:linear-gradient(90deg,#D98F9B,#C76E80);width:0%}
 
-    /* Responsive */
-    @media(max-width:1100px){
-      body{padding:12px}
-      .app{flex-direction:column;align-items:center}
-      .controls{order:2;width:100%;max-width:900px}
-      .book-stage{order:1;max-width:100%}
+    .progress {
+      width: min(100%, 760px);
+      height: 4px;
+      background: #efdce0;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 18px;
     }
-    @media(max-width:700px){
-      :root{--page-width:360px;--page-height:640px}
-      .page-body{flex-direction:column}
-      .photo-col, .story-col{width:100%}
-      .polaroid .frame{height:220px}
+
+    .progress-fill {
+      width: 10%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #d987a1, #c9a078);
+      transition: width .6s ease;
     }
-    /* Small utility */
-    .muted{color:var(--muted)}
-    .center{text-align:center}
-    .tiny{font-size:12px}
-    .flex{display:flex}
-    .gap8{gap:8px}
-    .hidden{display:none}
+
+    .stage {
+      position: relative;
+      width: min(100%, 760px);
+      height: min(690px, calc(100dvh - 150px));
+      min-height: 470px;
+      overflow: hidden;
+      border: 1px solid rgba(201, 160, 120, .3);
+      border-radius: 28px;
+      background: rgba(255, 253, 251, .8);
+      box-shadow: 0 20px 70px rgba(151, 96, 116, .12);
+      backdrop-filter: blur(12px);
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 19px;
+      padding: 40px 32px;
+      text-align: center;
+      overflow-y: auto;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(18px) scale(.985);
+      transition:
+        opacity .65s ease,
+        transform .65s ease,
+        visibility .65s;
+      pointer-events: none;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .title {
+      font-family: 'Great Vibes', cursive;
+      color: #bd718c;
+      font-size: clamp(43px, 7vw, 68px);
+      font-weight: 400;
+      line-height: 1.18;
+    }
+
+    .message {
+      max-width: 540px;
+      font-size: clamp(14px, 2.5vw, 17px);
+      line-height: 1.95;
+      color: #775966;
+    }
+
+    .quote {
+      max-width: 540px;
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(28px, 5vw, 40px);
+      color: #b66e88;
+      line-height: 1.5;
+    }
+
+    .ornament {
+      color: #c49a78;
+      letter-spacing: 9px;
+      font-size: 17px;
+    }
+
+    .heart-icon {
+      font-size: 54px;
+      filter: drop-shadow(0 7px 12px #edb7c9);
+      animation: heartbeat 1.7s infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      10%, 30% { transform: scale(1.09); }
+      20% { transform: scale(.98); }
+    }
+
+    .photo-frame {
+      width: min(100%, 380px);
+      height: clamp(170px, 29vh, 245px);
+      padding: 9px;
+      background: #fff;
+      border: 1px solid #ead1d4;
+      box-shadow: 0 12px 30px #ad77851b;
+      border-radius: 5px;
+      transform: rotate(-1.5deg);
+      flex-shrink: 0;
+    }
+
+    .photo-frame img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: linear-gradient(135deg, #ffe7ec, #fff4e8);
+      color: #966d7c;
+      font-size: 13px;
+    }
+
+    .photo-caption {
+      font-family: 'Great Vibes', cursive;
+      color: #bd718c;
+      font-size: 27px;
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-top: 19px;
+    }
+
+    .btn {
+      border: 1px solid #e4bac6;
+      background: rgba(255, 255, 255, .8);
+      color: #a5637d;
+      padding: 12px 22px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s, background .2s;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 20px #d69caf36;
+    }
+
+    .btn:focus-visible {
+      outline: 3px solid #bd718c;
+      outline-offset: 4px;
+    }
+
+    .btn-primary {
+      color: white;
+      border-color: transparent;
+      background: linear-gradient(135deg, #df9bb0, #c58b76);
+      box-shadow: 0 7px 18px #cf9aa940;
+      min-width: 125px;
+    }
+
+    .btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .hint {
+      margin-top: 12px;
+      font-size: 11px;
+      color: #b69aa3;
+      letter-spacing: .5px;
+    }
+
+    .final-title {
+      font-size: clamp(36px, 6vw, 58px);
+    }
+
+    .surprise-btn {
+      margin-top: 7px;
+      padding: 15px 35px;
+      font-size: 15px;
+      animation: glow 2s ease-in-out infinite;
+    }
+
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 5px 18px #d69caf40; }
+      50% { box-shadow: 0 5px 30px #d69caf90; }
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: rgba(77, 44, 59, .38);
+      backdrop-filter: blur(7px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .3s, visibility .3s;
+      z-index: 10;
+    }
+
+    .modal.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      width: min(100%, 430px);
+      padding: 38px 25px;
+      border-radius: 25px;
+      border: 1px solid #e5c5ca;
+      background: #fff9f4;
+      box-shadow: 0 20px 80px #613b4b38;
+      text-align: center;
+      transform: scale(.8);
+      transition: transform .35s;
+    }
+
+    .modal.show .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-card h2 {
+      font-family: 'Great Vibes', cursive;
+      color: #bd718c;
+      font-size: clamp(38px, 8vw, 53px);
+      font-weight: 400;
+      margin: 15px 0;
+    }
+
+    .modal-card p {
+      font-size: 14px;
+      line-height: 1.9;
+      color: #775966;
+      margin-bottom: 22px;
+    }
+
+    .modal-heart {
+      font-size: 52px;
+      animation: heartbeat 1.2s infinite;
+    }
+
+    .confetti {
+      position: fixed;
+      z-index: 12;
+      top: -20px;
+      width: 9px;
+      height: 13px;
+      pointer-events: none;
+      animation: confettiFall linear forwards;
+    }
+
+    @keyframes confettiFall {
+      to {
+        transform: translate3d(var(--drift), 110vh, 0)
+                   rotate(var(--rotation));
+        opacity: .2;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .app {
+        padding: 14px 12px;
+      }
+
+      .stage {
+        height: calc(100dvh - 137px);
+        min-height: 440px;
+        border-radius: 22px;
+      }
+
+      .slide {
+        padding: 28px 20px;
+        gap: 15px;
+      }
+
+      .photo-frame {
+        height: clamp(145px, 25vh, 205px);
+      }
+
+      .message {
+        line-height: 1.8;
+      }
+
+      .navigation {
+        margin-top: 14px;
+      }
+
+      .btn {
+        padding: 11px 19px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <div class="app" id="app">
-    <div class="controls" aria-label="Kontrol Buku">
-      <h2>Happy Birthday — Buku Kenangan</h2>
+  <div class="background"></div>
+  <div class="floating-layer" id="floatingLayer"></div>
 
-      <div class="center">
-        <button id="openBookBtn" class="btn">Buka Buku</button>
-        <button id="backCoverBtn" class="btn secondary small">Kembali ke Sampul</button>
-      </div>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">♡ A Little Love Story</div>
+      <div class="counter" id="counter">01 / 10</div>
+    </header>
 
-      <label for="goto">Lompat ke halaman (1–40)</label>
-      <div class="row">
-        <input id="goto" type="number" min="1" max="40" placeholder="Halaman" />
-        <button id="gotoBtn" class="btn small">Pergi</button>
-      </div>
-
-      <div style="margin-top:8px">
-        <label>Musik Latar (opsional) — Masukkan URL audio (mp3/ogg/wav)</label>
-        <input id="bgAudioUrl" type="url" placeholder="https://.../lagu.mp3" />
-        <div class="row" style="margin-top:6px">
-          <button id="bgPlay" class="btn small">Putar Musik Latar</button>
-          <button id="bgPause" class="btn small secondary">Jeda</button>
-        </div>
-        <label class="tiny" style="margin-top:6px">Volume</label>
-        <input id="bgVolume" type="range" min="0" max="1" step="0.01" value="0.5"/>
-      </div>
-
-      <hr style="margin:12px 0;border:none;border-top:1px solid #eee"/>
-
-      <label>Ekspor / Impor Buku</label>
-      <div class="row">
-        <button id="exportBtn" class="btn small">Ekspor JSON</button>
-        <label class="btn small secondary" style="padding:8px 10px;cursor:pointer">
-          Impor JSON
-          <input id="importFile" type="file" accept="application/json" style="display:none" />
-        </label>
-      </div>
-      <div style="margin-top:8px">
-        <button id="saveAllBtn" class="btn small">Simpan Sekarang</button>
-        <button id="resetAllBtn" class="btn small secondary">Reset Semua (Konfirmasi)</button>
-      </div>
-
-      <div style="margin-top:12px">
-        <label>Petunjuk singkat</label>
-        <div class="tiny muted" style="margin-top:6px">
-          - Ganti [Nama Pasangan] dan [Nama Pengirim] di halaman jika perlu.<br/>
-          - Untuk foto, gunakan URL langsung ke file gambar (https, file harus public).<br/>
-          - Untuk audio, gunakan URL langsung (.mp3 / .ogg / .wav).<br/>
-          - Gunakan "Ekspor JSON" untuk mem-backup, "Impor JSON" untuk memulihkan.<br/>
-          - localStorage menyimpan di browser ini saja (tidak tersinkronisasi).
-        </div>
-      </div>
-
-      <div style="margin-top:12px">
-        <div class="status" id="saveStatus">Status: Tidak ada perubahan</div>
-      </div>
+    <div
+      class="progress"
+      role="progressbar"
+      aria-label="Kemajuan cerita"
+      aria-valuemin="1"
+      aria-valuemax="10"
+      aria-valuenow="1"
+      id="progress"
+    >
+      <div class="progress-fill" id="progressFill"></div>
     </div>
 
-    <div class="book-stage" aria-live="polite">
-      <div class="book" id="book" role="region" aria-label="Buku Kenangan">
-        <!-- Page container; content injected by JS -->
-        <div class="page" id="page" role="article" aria-labelledby="pageTitle" aria-describedby="pageDesc">
-          <div class="page-inner" id="pageInner">
-            <!-- dynamic content -->
-            <div id="pageContent" style="width:100%"></div>
-          </div>
-        </div>
-      </div>
+    <section class="stage" id="stage" aria-label="Ucapan ulang tahun">
+      <!-- SLIDE 1 -->
+      <article class="slide active">
+        <div class="eyebrow">A special day for someone special</div>
+        <div class="heart-icon">💗</div>
+        <h1 class="title">Selamat Ulang Tahun,<br>Sayang! 🎂</h1>
+        <div class="ornament">♡ ✧ ♡</div>
+        <p class="message">
+          Hari istimewa untuk seseorang yang membuat
+          hari-hariku terasa lebih indah.
+          Hari ini, semua doa dan cinta terbaikku
+          hanya untukmu.
+        </p>
+        <p class="quote">You deserve all the love in the world.</p>
+      </article>
 
-      <div class="nav-bottom" style="margin-top:12px">
-        <div class="left">
-          <button id="prevBtn" class="btn small secondary">Halaman Sebelumnya</button>
-          <button id="nextBtn" class="btn small">Halaman Berikutnya</button>
-          <button id="openBtn" class="btn small">Buka Buku</button>
+      <!-- SLIDE 2 -->
+      <article class="slide">
+        <div class="eyebrow">Chapter 02 · Your existence</div>
+        <div class="heart-icon">🌷</div>
+        <h2 class="title">Hari yang Istimewa</h2>
+        <p class="quote">
+          "Hari ini adalah hari favoritku, karena hari ini
+          dunia menyambut kehadiran orang sepertimu."
+        </p>
+        <div class="ornament">✧ ♡ ✧</div>
+        <p class="message">
+          Betapa beruntungnya dunia memiliki kamu,
+          dan betapa beruntungnya aku bisa mengenalmu.
+          Kehadiranmu adalah hadiah yang tidak pernah
+          ingin aku sia-siakan.
+        </p>
+      </article>
+
+      <!-- SLIDE 3 -->
+      <article class="slide">
+        <div class="eyebrow">Chapter 03 · Thank you</div>
+        <div class="heart-icon">💌</div>
+        <h2 class="title">Terima Kasih, Cintaku</h2>
+        <p class="quote">
+          "Terima kasih sudah menjadi bagian terindah
+          dalam hidupku dan membawa banyak tawa."
+        </p>
+        <div class="ornament">♡ ✧ ♡</div>
+        <p class="message">
+          Terima kasih untuk setiap cerita, perhatian,
+          pelukan, dan tawa sederhana yang menjadi
+          kenangan berharga. Bersamamu, hal-hal kecil
+          terasa luar biasa.
+        </p>
+      </article>
+
+      <!-- SLIDE 4: GANTI FOTO DI SINI -->
+      <article class="slide">
+        <div class="eyebrow">Chapter 04 · Our memories</div>
+        <div class="photo-frame">
+          <img src="https://uploads.onecompiler.io/455p5fxtf/456gqgrdx/IMG_0421-dikompresi.jpg" alt="Foto kenangan pertama kita"
+               onerror="this.alt='Ganti dengan foto1.jpg milikmu'">
         </div>
-        <div class="center tiny muted" id="pageIndicator">Halaman 1 dari 40</div>
-        <div class="right" style="display:flex;align-items:center">
-          <div style="width:140px" class="muted tiny center">Progres</div>
-          <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+        <p class="photo-caption">Our favorite little moments ♡</p>
+        <p class="message">
+          "Setiap momen bersamamu adalah cerita favorit
+          yang selalu ingin kuulang."
+        </p>
+      </article>
+
+      <!-- SLIDE 5: GANTI FOTO DI SINI -->
+      <article class="slide">
+        <div class="eyebrow">Chapter 05 · The little things</div>
+        <div class="photo-frame">
+          <img src="https://uploads.onecompiler.io/455p5fxtf/1791961137842/WhatsApp%20Image%202026-10-14%20at%2013.55.32.jpeg" alt="Foto kenangan kedua kita"
+               onerror="this.alt='Ganti dengan foto2.jpg milikmu'">
         </div>
-      </div>
+        <p class="photo-caption">Everything I adore about you</p>
+        <p class="message">
+          "Aku bersyukur atas segala sifat sabarmu,
+          senyummu, dan caramu menyayangiku."
+        </p>
+      </article>
+
+      <!-- SLIDE 6: GANTI FOTO DI SINI -->
+      <article class="slide">
+        <div class="eyebrow">Chapter 06 · Your dreams</div>
+        <div class="photo-frame">
+          <img src="https://uploads.onecompiler.io/455p5fxtf/1791961401609/WhatsApp%20Image%202026-10-14%20at%2013.55.33.jpeg" alt="Foto kenangan ketiga kita"
+               onerror="this.alt='Ganti dengan foto3.jpg milikmu'">
+        </div>
+        <p class="photo-caption">May all your wishes come true ✨</p>
+        <p class="message">
+          "Di usiamu yang baru, aku berharap kamu selalu
+          didekatkan dengan kebahagiaan dan impianmu."
+        </p>
+      </article>
+
+      <!-- SLIDE 7: GANTI FOTO DI SINI -->
+      <article class="slide">
+        <div class="eyebrow">Chapter 07 · Always here</div>
+        <div class="photo-frame">
+          <img src="https://uploads.onecompiler.io/455p5fxtf/1791961582219/foto2.png" alt="Foto kenangan keempat kita"
+               onerror="this.alt='Ganti dengan foto4.jpg milikmu'">
+        </div>
+        <p class="photo-caption">You will never walk alone ♡</p>
+        <p class="message">
+          "Jangan pernah merasa sendiri, karena ada aku
+          yang akan selalu menggenggam tanganmu."
+        </p>
+      </article>
+
+      <!-- SLIDE 8: GANTI FOTO DI SINI -->
+      <article class="slide">
+        <div class="eyebrow">Chapter 08 · Your beautiful smile</div>
+        <div class="photo-frame">
+          <img src="https://uploads.onecompiler.io/455p5fxtf/1791559336121/foto.jpeg" alt="Foto kenangan kelima kita"
+               onerror="this.alt='Ganti dengan foto5.jpg milikmu'">
+        </div>
+        <p class="photo-caption">Keep that beautiful smile</p>
+        <p class="message">
+          "Semoga semesta menjaga senyum indahmu itu
+          hari ini, esok, dan seterusnya."
+        </p>
+      </article>
+
+      <!-- SLIDE 9: GANTI FOTO DI SINI -->
+      <article class="slide">
+        <div class="eyebrow">Chapter 09 · From me to you</div>
+        <div class="photo-frame">
+          <img src="https://uploads.onecompiler.io/455p5fxtf/1791962334701/WhatsApp%20Image%202026-10-14%20at%2014.13.38%20(1).jpeg" alt="Foto kenangan keenam kita"
+               onerror="this.alt='Ganti dengan foto6.jpg milikmu'">
+        </div>
+        <p class="photo-caption">A little surprise, just for you</p>
+        <p class="message">
+          "Selamat bertambah usia, cintaku. Ini caraku
+          merayakanmu dari sini."
+        </p>
+      </article>
+
+      <!-- SLIDE 10 -->
+      <article class="slide">
+        <div class="eyebrow">Chapter 10 · Forever yours</div>
+        <div class="heart-icon">💖</div>
+        <h2 class="title final-title">
+          I Love You Today,<br>Tomorrow, and Forever. ❤️
+        </h2>
+        <p class="message">
+          Kalau ada satu hal yang ingin selalu kamu ingat,
+          itu adalah betapa berharganya dirimu.
+          Semoga hari ini menjadi awal dari banyak
+          kebahagiaan yang menunggumu.
+        </p>
+        <div class="ornament">♡ ✧ ♡ ✧ ♡</div>
+        <button class="btn btn-primary surprise-btn" id="surpriseBtn">
+          Klik Aku 💌
+        </button>
+        <p class="hint">Psst... ada satu kejutan terakhir untukmu ✨</p>
+      </article>
+
+    </section>
+
+    <nav class="navigation" aria-label="Navigasi slide">
+      <button class="btn" id="prevBtn" disabled>← Kembali</button>
+      <button class="btn btn-primary" id="nextBtn">Lanjut →</button>
+    </nav>
+    <p class="hint">Made with love, especially for you ♡</p>
+  </main>
+
+  <!-- POP-UP KEJUTAN -->
+  <div
+    class="modal"
+    id="loveModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+    aria-hidden="true"
+  >
+    <div class="modal-card">
+      <div class="modal-heart">💖</div>
+      <h2 id="modalTitle">I Love You So Much! ❤️</h2>
+      <p>
+        Selamat ulang tahun, sayangku!<br>
+        Terima kasih sudah hadir di hidupku.<br>
+        Semoga kita punya lebih banyak cerita,
+        tawa, dan kenangan indah bersama.<br><br>
+        <strong>You are my favorite person, always. ♡</strong>
+      </p>
+      <button class="btn btn-primary" id="closeModal">Peluk Jauh 🤗</button>
     </div>
   </div>
 
-  <!-- Background audio (separate from per-page audio) -->
-  <audio id="bgAudio" preload="none" style="display:none"></audio>
-
   <script>
-    /***************************************************************************
-     * Data model: pages[1..40] (we'll use index starting at 1)
-     * Each page object:
-     *  - pageTitle
-     *  - contentHtml (for static pages) OR structured data for memory pages:
-     *    - photoUrl, photoTitle
-     *    - audioUrl, audioDesc
-     *    - story, date
-     ***************************************************************************/
+    const slides = [...document.querySelectorAll('.slide')];
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const counter = document.getElementById('counter');
+    const progressFill = document.getElementById('progressFill');
+    const progress = document.getElementById('progress');
+    const stage = document.getElementById('stage');
 
-    const TOTAL_PAGES = 40;
-    const MEMORY_START = 4;
-    const MEMORY_END = 33; // inclusive -> 30 pages
-    const STORAGE_KEY = 'foryou_book_v1';
+    const modal = document.getElementById('loveModal');
+    const surpriseBtn = document.getElementById('surpriseBtn');
+    const closeModal = document.getElementById('closeModal');
 
-    // Default templates for static pages (in Bahasa Indonesia). Use placeholders [Nama Pasangan] and [Nama Pengirim].
-    const defaults = {
-      1: {
-        pageTitle: 'Sampul Depan',
-        contentHtml: `
-          <div class="center" style="margin-top:30px">
-            <h1 style="font-size:28px;margin:6px 0;color:var(--accent-dark)">Happy Birthday, My Favorite Person</h1>
-            <div class="muted tiny" style="margin-top:6px">Untuk: <strong>[Nama Pasangan]</strong></div>
-            <div class="muted tiny" style="margin-top:6px">Dari: <strong>[Nama Pengirim]</strong></div>
-          </div>
-        `
-      },
-      2: {
-        pageTitle: 'Pembukaan',
-        contentHtml: `
-          <div>
-            <h2>Selamat Ulang Tahun, [Nama Pasangan]!</h2>
-            <p class="muted">Hari ini aku bersyukur sekali karena bisa merayakan momen spesial ini bersamamu.</p>
-            <p>Selamat ulang tahun! Semoga hari-harimu selalu dipenuhi tawa, cinta, dan kebahagiaan. Aku tak pernah berhenti bersyukur karena telah dipertemukan denganmu. Setiap detik bersamamu terasa berharga dan membuatku menjadi versi yang lebih baik.</p>
-          </div>
-        `
-      },
-      3: {
-        pageTitle: 'Surat Cinta Pembuka',
-        contentHtml: `
-          <div>
-            <h3>Surat Cinta untukmu</h3>
-            <p>Sayangku [Nama Pasangan],</p>
-            <p>Sejak pertama kali kita bertemu, aku tahu ada sesuatu yang istimewa. Kau membuat hidupku lebih berwarna—dengan tawa, kelembutan, dan dukunganmu. Di hari ulang tahunmu ini, aku ingin kau tahu betapa dalamnya rasa sayangku padamu.</p>
-            <p class="muted tiny">(Ganti [Nama Pasangan] dan [Nama Pengirim] sesuai kebutuhan)</p>
-          </div>
-        `
-      },
-      34: {
-        pageTitle: 'Surat Cinta Paling Menyentuh',
-        contentHtml: `
-          <div>
-            <h3>Surat Cinta Terakhir (yang paling menyentuh)</h3>
-            <p>[Nama Pasangan] tersayang,</p>
-            <p>Aku menulis ini dengan hati yang penuh rasa syukur. Kau bukan hanya kekasih, tapi juga sahabat, guru, dan rumah bagiku. Bila dunia menyingkap semua hal yang mustahil, kau tetap adalah hal yang paling pasti dalam hidupku.</p>
-            <p>Terima kasih sudah menjadi kamu—sempurna dengan segala ketidaksempurnaan. Aku berjanji akan selalu menjaga dan mencintaimu.</p>
-          </div>
-        `
-      },
-      35: {
-        pageTitle: 'Alasan Mengapa Kau Istimewa',
-        contentHtml: `
-          <div>
-            <h3>Mengapa Kau Begitu Istimewa</h3>
-            <ol>
-              <li>Ketulusan hatimu yang membuat orang nyaman di sekitarmu.</li>
-              <li>Caramu mendukung mimpi dan rencana hidupku tanpa menuntut balasan.</li>
-              <li>Tawa dan senyummu yang mampu menghapus buruknya hari.</li>
-            </ol>
-          </div>
-        `
-      },
-      36: {
-        pageTitle: 'Harapan dan Doa',
-        contentHtml: `
-          <div>
-            <h3>Harapan dan Doa</h3>
-            <p>Aku berharap agar kau selalu diberi kesehatan, kebahagiaan, dan kesuksesan dalam setiap langkah. Semoga semua impianmu dipermudah jalan menuju kenyataan.</p>
-          </div>
-        `
-      },
-      37: {
-        pageTitle: 'Janji',
-        contentHtml: `
-          <div>
-            <h3>Janji untukmu</h3>
-            <p>Aku berjanji akan terus belajar menjadi pasangan yang lebih baik, mendukung impianmu, dan selalu ada di saat suka maupun duka.</p>
-          </div>
-        `
-      },
-      38: {
-        pageTitle: 'Pesan Romantis Terakhir',
-        contentHtml: `
-          <div>
-            <h3>Pesan Terakhir</h3>
-            <p>Di setiap detik yang kita lewati, aku merasakan kebahagiaan sederhana yang hanya kau yang memberikannya. Aku mencintaimu, hari ini, esok, dan selamanya.</p>
-          </div>
-        `
-      },
-      39: {
-        pageTitle: 'Ucapan Penutup dan Terima Kasih',
-        contentHtml: `
-          <div>
-            <h3>Terima Kasih</h3>
-            <p>Terima kasih telah menjadi bagian dari hidupku. Semoga ulang tahun ini menjadi awal dari bab yang indah dalam perjalanan kita bersama.</p>
-            <p class="muted tiny">Dengan cinta, <strong>[Nama Pengirim]</strong></p>
-          </div>
-        `
-      },
-      40: {
-        pageTitle: 'Sampul Belakang',
-        contentHtml: `
-          <div class="center">
-            <div style="margin-top:40px;font-size:16px;color:var(--muted)">Our Story Is Still Being Written</div>
-            <div style="margin-top:12px;font-size:12px;color:var(--muted)">Simpan kenangan ini, isi dengan cinta, dan bagikan kebahagiaan.</div>
-          </div>
-        `
-      }
-    };
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
 
-    // Initialize pages array 1..40
-    let pages = new Array(TOTAL_PAGES + 1).fill(null);
+    let currentSlide = 0;
 
-    function createEmptyMemory(index){
-      return {
-        pageTitle: `Kenangan #${index - MEMORY_START + 1}`,
-        photoUrl: '',
-        photoTitle: '',
-        audioUrl: '',
-        audioDesc: '',
-        story: '',
-        date: ''
-      };
-    }
+    function showSlide(index) {
+      currentSlide = Math.max(0, Math.min(index, slides.length - 1));
 
-    // Fill defaults
-    for(let i=1;i<=TOTAL_PAGES;i++){
-      if(i in defaults){
-        pages[i] = Object.assign({}, defaults[i]);
-      } else if (i >= MEMORY_START && i <= MEMORY_END) {
-        pages[i] = createEmptyMemory(i);
-      } else {
-        // For other pages not explicitly in defaults, create simple placeholders
-        pages[i] = {
-          pageTitle: `Halaman ${i}`,
-          contentHtml: `<div><p>Konten halaman ${i} — Anda dapat mengedit teks ini jika diperlukan.</p></div>`
-        };
-      }
-    }
-
-    // Try to load from localStorage
-    function loadFromStorage(){
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if(!raw) return false;
-        const obj = JSON.parse(raw);
-        // basic validation: must have length or object keys
-        if(!obj || !Array.isArray(obj.pages)) return false;
-        // Merge loaded to pages but preserve default static content for pages that have contentHtml unless loaded has custom
-        for(let i=1;i<=TOTAL_PAGES;i++){
-          const lp = obj.pages[i];
-          if(lp){
-            pages[i] = lp;
-          }
-        }
-        return true;
-      }catch(e){
-        console.warn('Load failed', e);
-        return false;
-      }
-    }
-
-    // Save to localStorage
-    let saveTimer = null;
-    function saveToStorage(showStatus = true){
-      if(saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
-      const payload = { savedAt: new Date().toISOString(), pages: pages };
-      try{
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-        if(showStatus) showSaveStatus('Perubahan disimpan', true);
-        return true;
-      }catch(e){
-        showSaveStatus('Gagal menyimpan: ' + e, false);
-        return false;
-      }
-    }
-
-    function scheduleAutosave(){
-      if(saveTimer) clearTimeout(saveTimer);
-      saveTimer = setTimeout(()=> saveToStorage(true), 800);
-    }
-
-    function showSaveStatus(text, ok=true){
-      const el = document.getElementById('saveStatus');
-      el.textContent = 'Status: ' + text;
-      el.style.color = ok ? 'green' : 'crimson';
-      setTimeout(()=>{ el.style.color = ok ? 'green' : 'crimson'; }, 100);
-    }
-
-    // Load storage if present
-    loadFromStorage();
-
-    // Current page index
-    let currentPage = 1;
-    let turning = false;
-
-    const pageEl = document.getElementById('page');
-    const pageContentEl = document.getElementById('pageContent');
-    const pageInner = document.getElementById('pageInner');
-    const book = document.getElementById('book');
-
-    // Helpers for building memory page HTML
-    function buildMemoryPageHtml(index){
-      const data = pages[index];
-      const id = index;
-      // photo preview & input, audio input & player, story textarea, title input, date
-      return `
-        <div class="page-header">
-          <div class="page-title" id="pageTitle">${escapeHtml(data.pageTitle || '')}</div>
-          <div class="page-meta" id="pageDesc">Halaman ${index} — Kenangan ${index - MEMORY_START + 1}</div>
-        </div>
-
-        <div class="page-body" role="group" aria-label="Isi kenangan">
-          <div class="photo-col" aria-label="Foto kenangan">
-            <label for="photoUrl_${id}">Masukkan tautan foto kenangan</label>
-            <input type="url" id="photoUrl_${id}" placeholder="https://.../foto.jpg" value="${escapeAttr(data.photoUrl || '')}" />
-            <div class="polaroid" aria-live="polite">
-              <div class="frame" id="photoFrame_${id}">
-                ${data.photoUrl ? `<img id="photoImg_${id}" src="${escapeAttr(data.photoUrl)}" alt="${escapeAttr(data.photoTitle || 'Foto kenangan')}" />` : `<div id="photoPlaceholder_${id}" class="placeholder">Foto kenangan kita ada di sini</div>`}
-              </div>
-              <input type="text" id="photoTitle_${id}" placeholder="Judul atau keterangan foto" value="${escapeAttr(data.photoTitle || '')}" class="photo-caption" />
-              <div style="margin-top:6px;font-size:12px;color:var(--muted)">
-                Pilih gaya foto:
-                <select id="photoStyle_${id}">
-                  <option value="polaroid">Polaroid</option>
-                  <option value="scrap">Scrapbook</option>
-                  <option value="frame">Frame klasik</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div class="story-col">
-            <label for="title_${id}">Judul Halaman (dapat diedit)</label>
-            <input type="text" id="title_${id}" value="${escapeAttr(data.pageTitle || '')}" />
-            <label for="date_${id}">Tanggal kenangan (opsional)</label>
-            <input type="text" id="date_${id}" placeholder="YYYY-MM-DD atau 'Januari 2020'" value="${escapeAttr(data.date || '')}" />
-            <label for="story_${id}">Cerita kenangan</label>
-            <textarea id="story_${id}" placeholder="Tulis cerita atau kenangan di sini">${escapeHtml(data.story || '')}</textarea>
-
-            <div class="audio-box" aria-label="Audio kenangan">
-              <label for="audioUrl_${id}">Masukkan tautan audio kenangan</label>
-              <input type="url" id="audioUrl_${id}" placeholder="https://.../suara.mp3" value="${escapeAttr(data.audioUrl || '')}" />
-              <div class="audio-controls" id="audioControls_${id}">
-                <button id="audioPlay_${id}" class="btn small">Putar Audio</button>
-                <button id="audioPause_${id}" class="btn small secondary">Jeda Audio</button>
-                <div id="audioStatus_${id}" class="muted tiny" style="margin-left:8px"> ${data.audioUrl ? 'Audio siap' : 'Tambahkan lagu atau suara kenangan di sini'}</div>
-              </div>
-              <div style="margin-top:6px">
-                <label for="audioDesc_${id}">Keterangan audio</label>
-                <input type="text" id="audioDesc_${id}" placeholder="Contoh: Lagu kenangan / Pesan suara" value="${escapeAttr(data.audioDesc || '')}" />
-              </div>
-              <div id="audioPlayerWrap_${id}" style="margin-top:8px">${data.audioUrl ? `<audio id="audioPlayer_${id}" controls preload="none" src="${escapeAttr(data.audioUrl)}"></audio>` : ''}</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="page-footer">
-          <div class="left">
-            <button id="savePage_${id}" class="btn small">Simpan Perubahan</button>
-            <button id="resetPage_${id}" class="btn small secondary">Reset Halaman</button>
-          </div>
-          <div class="right">
-            <div class="muted tiny">Halaman ${index} dari ${TOTAL_PAGES}</div>
-          </div>
-        </div>
-      `;
-    }
-
-    // Escape functions
-    function escapeHtml(s){
-      if(!s) return '';
-      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-    function escapeAttr(s){
-      if(!s) return '';
-      return s.replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/&/g,'&amp;').replace(/</g,'&lt;');
-    }
-
-    // Render current page
-    function renderPage(index, options = {animate:true}){
-      if(index < 1) index = 1;
-      if(index > TOTAL_PAGES) index = TOTAL_PAGES;
-      currentPage = index;
-
-      // Prevent quick multiple turns
-      if(turning) return;
-
-      // Update progress & indicator
-      document.getElementById('pageIndicator').textContent = `Halaman ${index} dari ${TOTAL_PAGES}`;
-      const pct = Math.round((index / TOTAL_PAGES) * 100);
-      document.getElementById('progressBar').style.width = pct + '%';
-
-      // Determine content
-      const pageData = pages[index];
-
-      let html = '';
-
-      if(index >= MEMORY_START && index <= MEMORY_END){
-        html = buildMemoryPageHtml(index);
-      } else {
-        // Static page
-        const title = pageData.pageTitle || `Halaman ${index}`;
-        const contentHtml = pageData.contentHtml || `<div><p>Halaman ${index}</p></div>`;
-        html = `
-          <div class="page-header">
-            <div class="page-title" id="pageTitle">${escapeHtml(title)}</div>
-            <div class="page-meta" id="pageDesc">Halaman ${index} dari ${TOTAL_PAGES}</div>
-          </div>
-          <div class="page-body" style="padding-top:8px">
-            <div style="width:100%">${contentHtml}</div>
-          </div>
-          <div style="flex:0 0 20px"></div>
-        `;
-      }
-
-      // Animate flip (simple rotateY flip)
-      if(options.animate && index !== currentPage){
-        // no-op (we already set currentPage)
-      }
-
-      // Use a gentle flip effect for each navigation
-      turnPage(() => {
-        pageContentEl.innerHTML = html;
-        attachPageEventHandlers(index);
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === currentSlide);
+        slide.setAttribute('aria-hidden', i !== currentSlide);
       });
+
+      counter.textContent =
+        `${String(currentSlide + 1).padStart(2, '0')} / ` +
+        `${String(slides.length).padStart(2, '0')}`;
+
+      const percentage = ((currentSlide + 1) / slides.length) * 100;
+      progressFill.style.width = `${percentage}%`;
+      progress.setAttribute('aria-valuenow', currentSlide + 1);
+
+      prevBtn.disabled = currentSlide === 0;
+      nextBtn.disabled = currentSlide === slides.length - 1;
+      nextBtn.textContent =
+        currentSlide === slides.length - 1 ? 'Selesai ♡' : 'Lanjut →';
+
+      // Posisikan konten slide baru dari bagian atas.
+      slides[currentSlide].scrollTop = 0;
     }
 
-    // turnPage: add flip animation
-    function turnPage(callback){
-      if(turning){
-        // fallback immediate render
-        callback && callback();
+    nextBtn.addEventListener('click', () => {
+      if (currentSlide < slides.length - 1) {
+        showSlide(currentSlide + 1);
+      }
+    });
+
+    prevBtn.addEventListener('click', () => {
+      showSlide(currentSlide - 1);
+    });
+
+    // Navigasi keyboard.
+    document.addEventListener('keydown', (event) => {
+      if (modal.classList.contains('show')) {
+        if (event.key === 'Escape') hideModal();
         return;
       }
-      turning = true;
-      book.classList.add('turning');
-      // Visual flip using rotateY
-      pageEl.style.transform = 'rotateY(-12deg) translateX(-6px)';
-      pageEl.style.boxShadow = '0 20px 40px rgba(0,0,0,0.25)';
-      setTimeout(()=>{
-        // mid-turn: call content swap
-        callback && callback();
-        // finish
-        pageEl.style.transform = 'rotateY(0deg) translateX(0)';
-        pageEl.style.boxShadow = 'var(--shadow)';
-        setTimeout(()=>{
-          book.classList.remove('turning');
-          turning = false;
-        }, 720);
-      }, 260);
+
+      if (event.key === 'ArrowRight' && currentSlide < slides.length - 1) {
+        showSlide(currentSlide + 1);
+      }
+
+      if (event.key === 'ArrowLeft' && currentSlide > 0) {
+        showSlide(currentSlide - 1);
+      }
+    });
+
+    // Membuat hati dan kelopak yang melayang.
+    const floatingLayer = document.getElementById('floatingLayer');
+    const symbols = ['♡', '♥', '✿', '🌸', '✨'];
+
+    for (let i = 0; i < 22; i++) {
+      const item = document.createElement('span');
+      item.className = 'float-item';
+      item.textContent = symbols[i % symbols.length];
+
+      item.style.left = `${Math.random() * 100}%`;
+      item.style.fontSize = `${12 + Math.random() * 17}px`;
+      item.style.animationDuration = `${12 + Math.random() * 16}s`;
+      item.style.animationDelay = `${-Math.random() * 25}s`;
+
+      floatingLayer.appendChild(item);
     }
 
-    // Attach interactive handlers for a rendered page
-    function attachPageEventHandlers(index){
-      // For memory pages only: wire inputs
-      if(index >= MEMORY_START && index <= MEMORY_END){
-        const id = index;
-        const photoUrlEl = document.getElementById(`photoUrl_${id}`);
-        const photoTitleEl = document.getElementById(`photoTitle_${id}`);
-        const photoStyleEl = document.getElementById(`photoStyle_${id}`);
-        const titleEl = document.getElementById(`title_${id}`);
-        const dateEl = document.getElementById(`date_${id}`);
-        const storyEl = document.getElementById(`story_${id}`);
-        const audioUrlEl = document.getElementById(`audioUrl_${id}`);
-        const audioDescEl = document.getElementById(`audioDesc_${id}`);
-        const saveBtn = document.getElementById(`savePage_${id}`);
-        const resetBtn = document.getElementById(`resetPage_${id}`);
+    // Kejutan terakhir: pop-up dan konfeti.
+    function launchConfetti() {
+      if (reducedMotion) return;
 
-        // Photo update function
-        function updatePhotoPreview(){
-          const url = photoUrlEl.value.trim();
-          pages[id].photoUrl = url;
-          pages[id].photoTitle = photoTitleEl.value.trim();
-          if(!url){
-            const frame = document.getElementById(`photoFrame_${id}`);
-            frame.innerHTML = `<div id="photoPlaceholder_${id}" class="placeholder">Foto kenangan kita ada di sini</div>`;
-          } else {
-            const frame = document.getElementById(`photoFrame_${id}`);
-            frame.innerHTML = `<img id="photoImg_${id}" src="${escapeAttr(url)}" alt="${escapeAttr(pages[id].photoTitle || 'Foto kenangan')}" />`;
-            const img = document.getElementById(`photoImg_${id}`);
-            img.addEventListener('error', ()=> {
-              const frame = document.getElementById(`photoFrame_${id}`);
-              frame.innerHTML = `<div id="photoPlaceholder_${id}" class="placeholder">Foto gagal dimuat. Periksa URL atau izin akses.</div>`;
-            });
-            img.addEventListener('load', ()=> {
-              // loaded successfully
-            });
-          }
-          scheduleAutosave();
-          showSaveStatus('Perubahan belum disimpan', true);
-        }
+      const colors = [
+        '#e8a2b7',
+        '#c99a75',
+        '#f7d9a9',
+        '#f4c7d3',
+        '#fff0f3'
+      ];
 
-        // Audio update function
-        function updateAudio(){
-          const url = audioUrlEl.value.trim();
-          pages[id].audioUrl = url;
-          pages[id].audioDesc = audioDescEl.value.trim();
-          const statusEl = document.getElementById(`audioStatus_${id}`);
-          const playerWrap = document.getElementById(`audioPlayerWrap_${id}`);
-          playerWrap.innerHTML = '';
-          if(!url){
-            statusEl.textContent = 'Tambahkan lagu atau suara kenangan di sini';
-            scheduleAutosave();
-            showSaveStatus('Perubahan belum disimpan', true);
-            return;
-          }
-          // Create audio element with controls
-          const audio = document.createElement('audio');
-          audio.id = `audioPlayer_${id}`;
-          audio.controls = true;
-          audio.preload = 'none';
-          audio.src = url;
-          audio.addEventListener('error', ()=> {
-            statusEl.textContent = 'Audio gagal dimuat. Pastikan URL langsung ke file audio yang dapat diakses.';
-          });
-          audio.addEventListener('loadeddata', ()=> {
-            statusEl.textContent = 'Audio siap';
-          });
-          playerWrap.appendChild(audio);
-          scheduleAutosave();
-          showSaveStatus('Perubahan belum disimpan', true);
-        }
+      for (let i = 0; i < 100; i++) {
+        const piece = document.createElement('span');
+        piece.className = 'confetti';
 
-        // event listeners
-        photoUrlEl.addEventListener('input', ()=> {
-          // small debounce
-          if(photoUrlEl._t) clearTimeout(photoUrlEl._t);
-          photoUrlEl._t = setTimeout(updatePhotoPreview, 400);
-        });
-        photoTitleEl.addEventListener('input', ()=> { pages[id].photoTitle = photoTitleEl.value.trim(); scheduleAutosave(); showSaveStatus('Perubahan belum disimpan', true); });
-        photoStyleEl.addEventListener('change', ()=> {
-          // Basic style switch (just demo: could change frame background)
-          const style = photoStyleEl.value;
-          const pol = document.querySelector('.polaroid');
-          if(style === 'scrap') pol.style.background = 'linear-gradient(180deg,#fff8f5,#fff)';
-          else if(style==='frame') pol.style.background = '#fffef9';
-          else pol.style.background = 'var(--polaroid-bg)';
-          scheduleAutosave();
-        });
+        piece.style.left = `${Math.random() * 100}vw`;
+        piece.style.background =
+          colors[Math.floor(Math.random() * colors.length)];
+        piece.style.borderRadius = Math.random() > .5 ? '50%' : '2px';
+        piece.style.setProperty('--drift', `${Math.random() * 240 - 120}px`);
+        piece.style.setProperty('--rotation', `${Math.random() * 1000}deg`);
+        piece.style.animationDuration = `${2 + Math.random() * 3}s`;
+        piece.style.animationDelay = `${Math.random() * .7}s`;
 
-        titleEl.addEventListener('input', ()=> { pages[id].pageTitle = titleEl.value.trim(); document.getElementById('pageTitle').textContent = pages[id].pageTitle; scheduleAutosave(); showSaveStatus('Perubahan belum disimpan', true); });
-        dateEl.addEventListener('input', ()=> { pages[id].date = dateEl.value.trim(); scheduleAutosave(); showSaveStatus('Perubahan belum disimpan', true); });
-        storyEl.addEventListener('input', ()=> { pages[id].story = storyEl.value; scheduleAutosave(); showSaveStatus('Perubahan belum disimpan', true); });
+        document.body.appendChild(piece);
 
-        audioUrlEl.addEventListener('input', ()=>{
-          if(audioUrlEl._t) clearTimeout(audioUrlEl._t);
-          audioUrlEl._t = setTimeout(updateAudio, 500);
-        });
-        audioDescEl.addEventListener('input', ()=> { pages[id].audioDesc = audioDescEl.value.trim(); scheduleAutosave(); showSaveStatus('Perubahan belum disimpan', true); });
-
-        // Play / Pause buttons (use event delegation)
-        const playBtn = document.getElementById(`audioPlay_${id}`);
-        const pauseBtn = document.getElementById(`audioPause_${id}`);
-        playBtn.addEventListener('click', ()=>{
-          const p = document.getElementById(`audioPlayer_${id}`);
-          if(p){
-            p.play().catch(err=> {
-              const statusEl = document.getElementById(`audioStatus_${id}`);
-              statusEl.textContent = 'Audio tidak bisa diputar otomatis di browser. Tekan play pada pemutar jika perlu.';
-            });
-          } else {
-            // no audio element yet: create one and attempt play
-            updateAudio();
-            setTimeout(()=> {
-              const p2 = document.getElementById(`audioPlayer_${id}`);
-              if(p2) p2.play().catch(()=>{/* ignore */});
-            }, 300);
-          }
-        });
-        pauseBtn.addEventListener('click', ()=>{
-          const p = document.getElementById(`audioPlayer_${id}`);
-          if(p) p.pause();
-        });
-
-        // Save page & Reset page
-        saveBtn.addEventListener('click', ()=>{
-          // Save current inputs into pages[] (ensure latest)
-          pages[id].photoUrl = photoUrlEl.value.trim();
-          pages[id].photoTitle = photoTitleEl.value.trim();
-          pages[id].pageTitle = titleEl.value.trim();
-          pages[id].date = dateEl.value.trim();
-          pages[id].story = storyEl.value;
-          pages[id].audioUrl = audioUrlEl.value.trim();
-          pages[id].audioDesc = audioDescEl.value.trim();
-          saveToStorage(true);
-        });
-
-        resetBtn.addEventListener('click', ()=>{
-          if(!confirm('Konfirmasi: reset halaman ini akan menghapus semua isi pada halaman. Lanjutkan?')) return;
-          const empty = createEmptyMemory(id);
-          pages[id] = empty;
-          // re-render same page to refresh UI
-          renderPage(id, {animate:false});
-          saveToStorage(true);
-        });
-
-        // If audio exists, ensure player element has error handling
-        const existingAudioPlayer = document.getElementById(`audioPlayer_${id}`);
-        if(existingAudioPlayer){
-          existingAudioPlayer.addEventListener('error', ()=> {
-            const statusEl = document.getElementById(`audioStatus_${id}`);
-            statusEl.textContent = 'Audio gagal dimuat. Pastikan URL langsung ke file audio yang dapat diakses.';
-          });
-        }
-
-      } else {
-        // static pages could be edited if they have contentHtml? Not required. We leave static content as-is.
+        piece.addEventListener('animationend', () => piece.remove());
       }
-
-      // Important: update page indicator and progress (again)
-      document.getElementById('pageIndicator').textContent = `Halaman ${index} dari ${TOTAL_PAGES}`;
-      document.getElementById('progressBar').style.width = Math.round((index / TOTAL_PAGES) * 100) + '%';
     }
 
-    // Navigation functions
-    function gotoPage(n, opts = {animate:true}){
-      if(n < 1) n = 1;
-      if(n > TOTAL_PAGES) n = TOTAL_PAGES;
-      // Prevent going outside range
-      if(n === currentPage){
-        renderPage(n, opts);
-        return;
-      }
-      renderPage(n, opts);
+    function showModal() {
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
+      launchConfetti();
+      closeModal.focus();
     }
 
-    function nextPage(){
-      if(currentPage >= TOTAL_PAGES) return;
-      gotoPage(currentPage + 1);
+    function hideModal() {
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+      surpriseBtn.focus();
     }
 
-    function prevPage(){
-      if(currentPage <= 1) return;
-      gotoPage(currentPage - 1);
-    }
+    surpriseBtn.addEventListener('click', showModal);
+    closeModal.addEventListener('click', hideModal);
 
-    // Wire top controls
-    document.getElementById('openBookBtn').addEventListener('click', ()=> gotoPage(2));
-    document.getElementById('openBtn').addEventListener('click', ()=> gotoPage(2));
-    document.getElementById('backCoverBtn').addEventListener('click', ()=> gotoPage(1));
-    document.getElementById('nextBtn').addEventListener('click', nextPage);
-    document.getElementById('prevBtn').addEventListener('click', prevPage);
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) hideModal();
+    });
 
-    document.getElementById('gotoBtn').addEventListener('click', ()=>{
-      const v = parseInt(document.getElementById('goto').value, 10);
-      if(isNaN(v) || v < 1 || v > TOTAL_PAGES){
-        alert('Masukkan nomor halaman antara 1 dan ' + TOTAL_PAGES);
-        return;
+    // Dukungan swipe untuk layar sentuh.
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    stage.addEventListener('touchstart', (event) => {
+      touchStartX = event.changedTouches[0].clientX;
+      touchStartY = event.changedTouches[0].clientY;
+    }, { passive: true });
+
+    stage.addEventListener('touchend', (event) => {
+      const dx = event.changedTouches[0].clientX - touchStartX;
+      const dy = event.changedTouches[0].clientY - touchStartY;
+
+      // Abaikan gestur vertikal agar konten tetap dapat digulir.
+      if (Math.abs(dx) < 65 || Math.abs(dx) < Math.abs(dy)) return;
+
+      if (dx < 0 && currentSlide < slides.length - 1) {
+        showSlide(currentSlide + 1);
+      } else if (dx > 0 && currentSlide > 0) {
+        showSlide(currentSlide - 1);
       }
-      gotoPage(v);
-    });
+    }, { passive: true });
 
-    // Keyboard navigation
-    document.addEventListener('keydown', (e)=>{
-      if(e.key === 'ArrowRight') nextPage();
-      else if(e.key === 'ArrowLeft') prevPage();
-    });
-
-    // Touch swipe navigation (simple)
-    let touchStartX = null;
-    let touchStartY = null;
-    pageEl.addEventListener('touchstart', (ev)=>{
-      if(ev.touches && ev.touches.length === 1){
-        touchStartX = ev.touches[0].clientX;
-        touchStartY = ev.touches[0].clientY;
-      }
-    }, {passive:true});
-    pageEl.addEventListener('touchend', (ev)=>{
-      if(touchStartX === null) return;
-      const endX = (ev.changedTouches && ev.changedTouches[0]) ? ev.changedTouches[0].clientX : null;
-      const endY = (ev.changedTouches && ev.changedTouches[0]) ? ev.changedTouches[0].clientY : null;
-      if(endX === null) return;
-      const dx = endX - touchStartX;
-      const dy = Math.abs(endY - touchStartY);
-      if(Math.abs(dx) > 40 && dy < 80){
-        if(dx < 0) nextPage(); else prevPage();
-      }
-      touchStartX = null;
-    }, {passive:true});
-
-    // Export / Import
-    document.getElementById('exportBtn').addEventListener('click', ()=>{
-      const payload = { exportedAt: new Date().toISOString(), pages: pages };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'buku_kenangan_export.json';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      showSaveStatus('File JSON diekspor', true);
-    });
-
-    document.getElementById('importFile').addEventListener('change', (ev)=>{
-      const f = ev.target.files[0];
-      if(!f) return;
-      if(!confirm('Impor akan menimpa isi buku saat ini. Lanjutkan?')) {
-        ev.target.value = '';
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = function(){
-        try{
-          const obj = JSON.parse(reader.result);
-          if(!obj || !Array.isArray(obj.pages) && typeof obj.pages !== 'object'){
-            alert('Format file tidak dikenali.');
-            return;
-          }
-          // Accept object.pages either as array or object keyed by index
-          const loaded = obj.pages;
-          for(let i=1;i<=TOTAL_PAGES;i++){
-            if(loaded[i]) pages[i] = loaded[i];
-          }
-          saveToStorage(true);
-          renderPage(1);
-          showSaveStatus('Impor berhasil', true);
-        }catch(e){
-          alert('Gagal mengimpor: ' + e);
-        }
-      };
-      reader.readAsText(f);
-      ev.target.value = '';
-    });
-
-    // Save all & Reset All
-    document.getElementById('saveAllBtn').addEventListener('click', ()=> {
-      saveToStorage(true);
-    });
-    document.getElementById('resetAllBtn').addEventListener('click', ()=> {
-      if(!confirm('Reset semua akan menghapus seluruh isi buku dan mengembalikan ke kondisi awal. Lanjutkan?')) return;
-      // restore defaults
-      for(let i=1;i<=TOTAL_PAGES;i++){
-        if(i in defaults) pages[i] = Object.assign({}, defaults[i]);
-        else if(i>=MEMORY_START && i<=MEMORY_END) pages[i] = createEmptyMemory(i);
-        else pages[i] = { pageTitle: `Halaman ${i}`, contentHtml: `<div><p>Halaman ${i}</p></div>` };
-      }
-      saveToStorage(true);
-      renderPage(1);
-    });
-
-    // Background audio controls
-    const bgAudio = document.getElementById('bgAudio');
-    document.getElementById('bgPlay').addEventListener('click', ()=>{
-      const url = document.getElementById('bgAudioUrl').value.trim();
-      if(!url){ alert('Masukkan tautan audio latar terlebih dahulu.'); return; }
-      if(bgAudio.src !== url) bgAudio.src = url;
-      bgAudio.volume = parseFloat(document.getElementById('bgVolume').value);
-      bgAudio.play().catch(()=> {
-        alert('Audio latar tidak dapat diputar otomatis oleh browser. Tekan tombol putar pada kontrol audio jika muncul.');
-      });
-    });
-    document.getElementById('bgPause').addEventListener('click', ()=> bgAudio.pause());
-    document.getElementById('bgVolume').addEventListener('input', (e)=> { bgAudio.volume = parseFloat(e.target.value); });
-
-    // Prevent navigation beyond bounds with UI checks
-    function safeNext(){ if(currentPage < TOTAL_PAGES) nextPage(); }
-    function safePrev(){ if(currentPage > 1) prevPage(); }
-
-    // Initial render
-    renderPage(currentPage, {animate:false});
-
-    // On first load, if storage exists show message
-    if(localStorage.getItem(STORAGE_KEY)){
-      showSaveStatus('Data ditemukan di browser, dimuat dari localStorage', true);
-    } else {
-      showSaveStatus('Siap. Mulai mengisi buku kenanganmu.', true);
-    }
-
-    // Accessibility: ensure focusable navigation
-    document.getElementById('nextBtn').setAttribute('aria-label','Halaman Berikutnya');
-    document.getElementById('prevBtn').setAttribute('aria-label','Halaman Sebelumnya');
-
-    // Helper: expose function to flip to given page from code
-    window.gotoPage = gotoPage;
-
-    // Provide instructions in console for advanced users
-    console.log('Buku Kenangan siap. Gunakan window.gotoPage(n) untuk lompat ke halaman n (1-40).');
+    showSlide(0);
   </script>
+  <audio controls autoplay src="https://mp3tourl.com/audio/1792308916549-f3d9ef40-d7bf-4c82-a38d-d7e65dfebed6.mp3" type="audio/mp3"/>
 </body>
 </html>
